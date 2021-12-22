@@ -21,14 +21,14 @@
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ new Date().toLocaleDateString() }} နေ့
+                  {{ getHighestRange(weekDatas).readDate }} နေ့
                 </v-col>
                 <v-col
                   cols="6"
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ 1200 }} ယူနစ်
+                  {{ getHighestRange(weekDatas).netUnit }} ယူနစ်
                 </v-col>
               </v-row>
             </v-card-text>
@@ -50,14 +50,14 @@
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ new Date().toLocaleDateString() }} နေ့
+                  {{ getLowestRange(weekDatas).readDate }} နေ့
                 </v-col>
                 <v-col
                   cols="6"
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ 1200 }} ယူနစ်
+                  {{ getLowestRange(weekDatas).netUnit }} ယူနစ်
                 </v-col>
               </v-row>
             </v-card-text>
@@ -75,31 +75,22 @@
                   ပျမ်းမျှအသုံးပြုမှု
                 </v-col>
                 <v-col
-                  cols="6"
+                  cols="12"
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ new Date().toLocaleDateString() }} နေ့
-                </v-col>
-                <v-col
-                  cols="6"
-                  align="center"
-                  class="white--text font-weight-bold"
-                >
-                  {{ 1200 }} ယူနစ်
+                  {{ getAvarageRange(weekDatas) }} ယူနစ်
                 </v-col>
               </v-row>
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" align="center">
-            
-        </v-col>
+        <v-col cols="12" align="center"> </v-col>
       </v-row>
       <v-divider class="my-10"></v-divider>
       <v-row>
         <v-col cols="12" md="6" offset-md="3">
-          <h3 class="dark--text mt-3">ယခုလ အသုံးပြုနှုန်း</h3>
+          <h3 class="dark--text mt-3">လအလိုက် အသုံးပြုနှုန်း</h3>
         </v-col>
         <v-col cols="12" md="4">
           <v-card dark class="orange darken-3">
@@ -117,14 +108,14 @@
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ new Date().toLocaleDateString() }} နေ့
+                  {{ getHighestRange(monthDatas).readDate }} နေ့
                 </v-col>
                 <v-col
                   cols="6"
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ 1200 }} ယူနစ်
+                  {{ getHighestRange(monthDatas).netUnit }} ယူနစ်
                 </v-col>
               </v-row>
             </v-card-text>
@@ -146,14 +137,14 @@
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ new Date().toLocaleDateString() }} နေ့
+                  {{ getLowestRange(monthDatas).readDate }} နေ့
                 </v-col>
                 <v-col
                   cols="6"
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ 1200 }} ယူနစ်
+                  {{ getLowestRange(monthDatas).netUnit }} ယူနစ်
                 </v-col>
               </v-row>
             </v-card-text>
@@ -171,24 +162,119 @@
                   ပျမ်းမျှအသုံးပြုမှု
                 </v-col>
                 <v-col
-                  cols="6"
+                  cols="12"
                   align="center"
                   class="white--text font-weight-bold"
                 >
-                  {{ new Date().toLocaleDateString() }} နေ့
-                </v-col>
-                <v-col
-                  cols="6"
-                  align="center"
-                  class="white--text font-weight-bold"
-                >
-                  {{ 1200 }} ယူနစ်
+                  {{ getAvarageRange(monthDatas) }} ယူနစ်
                 </v-col>
               </v-row>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="12" md="8" offset-md="2">
+          <MonthlyChart :monthlyDatas="monthNetDatas" />
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
+<script>
+import MeterUnits from "@/helper/meterUnits";
+import MonthlyChart from "@/components/MonthlyChart";
+export default {
+  name: "MeterCalculatorReports",
+  components: { MonthlyChart },
+  data() {
+    return {
+      weekDatas: [],
+      monthDatas: [],
+      weekNetDatas: [],
+      monthNetDatas: [],
+    };
+  },
+
+  mounted() {
+    this.getCurrentWeekDatas();
+    this.getThisMonthDatas();
+  },
+
+  methods: {
+    getCurrentWeekDatas: async function () {
+      var curr = new Date(); // get current date
+      var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+      var last = first + 6; // last day is the first day + 6
+
+      var firstday = new Date(curr.setDate(first)).toLocaleDateString();
+      var lastday = new Date(curr.setDate(last)).toLocaleDateString();
+      try {
+        this.weekDatas = await MeterUnits.getMeterWithRange(firstday, lastday);
+        for (var i in this.weekDatas) {
+          this.weekNetDatas.push(this.weekNetDatas[i].netUnit);
+        }
+      } catch (err) {
+        console.log("Error : ", err);
+      }
+    },
+    getThisMonthDatas: async function () {
+      var date = new Date();
+      var firstDay = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        1
+      ).toLocaleDateString();
+      var lastDay = new Date(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        0
+      ).toLocaleDateString();
+      try {
+        this.monthDatas = await MeterUnits.getMeterWithRange(firstDay, lastDay);
+        for (var i in this.monthDatas) {
+          this.monthNetDatas.push(this.monthDatas[i].netUnit);
+        }
+      } catch (err) {
+        console.log("Error : ", err);
+      }
+    },
+    getHighestRange: function (data) {
+      if (data.length > 0) {
+        var max = data.reduce(function (prev, current) {
+          return prev.netUnit > current.netUnit ? prev : current;
+        }); //returns object
+        return max;
+      } else {
+        return 0;
+      }
+    },
+    getLowestRange: function (data) {
+      if (data.length > 0) {
+        var min = data.reduce(function (prev, current) {
+          return prev.netUnit > current.netUnit ? current : prev;
+        }); //returns object
+        return min;
+      } else {
+        return 0;
+      }
+    },
+    getAvarageRange: function (data) {
+      var unitArray = [];
+      var total = 0;
+      if (data.length > 0) {
+        for (var i in data) {
+          unitArray.push(data[i].netUnit);
+        }
+        console.log(unitArray);
+        unitArray.map((unit) => {
+          total += parseInt(unit);
+        });
+        return (total / unitArray.length).toFixed(0);
+      } else {
+        return 0;
+      }
+    },
+  },
+};
+</script>

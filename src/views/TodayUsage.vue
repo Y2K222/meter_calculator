@@ -27,49 +27,13 @@
 </template>
 <script>
 import MeterUnits from "@/helper/meterUnits";
+import Calculator from "@/helper/calculator";
 export default {
   name: "TodayUsage",
   data: function () {
     return {
       meterUnit: 0,
-      netUnit: 0,
-      calculator: [
-        {
-          fromUnit: 1,
-          toUnit: 30,
-          price: 35,
-        },
-        {
-          fromUnit: 31,
-          toUnit: 50,
-          price: 50,
-        },
-        {
-          fromUnit: 51,
-          toUnit: 75,
-          price: 70,
-        },
-        {
-          fromUnit: 76,
-          toUnit: 100,
-          price: 90,
-        },
-        {
-          fromUnit: 101,
-          toUnit: 150,
-          price: 110,
-        },
-        {
-          fromUnit: 151,
-          toUnit: 200,
-          price: 120,
-        },
-        {
-          fromUnit: 201,
-          toUnit: 0,
-          price: 125,
-        },
-      ],
+      netUnit: 0
     };
   },
   methods: {
@@ -77,7 +41,7 @@ export default {
       var total = 0;
       var subtotals = [];
       var meterUnit = this.netUnit;
-      var c = this.calculator;
+      var c = Calculator.home;
       for (var i in c) {
         if (c[i].toUnit !== 0) {
           if (meterUnit > 0) {
@@ -101,32 +65,20 @@ export default {
     },
     getLatestMeter: async function () {
       try {
-        var meterUnits = new MeterUnits();
-
         // Get to toalnumber of meter datas
-        var result = await meterUnits.getTotalMeterCount();
+        var result = await MeterUnits.getTotalMeterCount();
         var totalCount = result.count;
 
         // Generate skip and limit for last two datas
-        var skip = totalCount - 2;
-        var limit;
+        var skip = totalCount - 1;
+        var limit = 1;
         if (skip < 0) skip = 0;
-        if (totalCount == 1) limit = 1;
-        else limit = 2;
 
         // Get last two datas
-        var result2 = await meterUnits.getMeterWithLimit(skip, limit);
-        var meterDatas = result2.totalData;
-        if (meterDatas.length > 0) {
-          if (meterDatas.length == 1) {
-            this.netUnit = meterDatas[0].unit;
-            this.meterUnit = meterDatas[0].unit;
-          } else {
-            // Calculate net unit
-            this.netUnit = meterDatas[0].unit - meterDatas[1].unit;
-            this.meterUnit = meterDatas[0].unit;
-          }
-        }
+        var result2 = await MeterUnits.getMeterWithLimit(skip, limit);
+        var latestData = result2.totalData[0];
+        this.meterUnit = latestData.unit;
+        this.netUnit = latestData.netUnit;
       } catch (err) {
         console.log("Error : ", err);
       }

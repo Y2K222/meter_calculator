@@ -55,11 +55,6 @@ export default {
           icon: "note_add",
           path: "/add-meter",
         },
-        {
-          title: "တွက်နည်းများ",
-          icon: "calculate",
-          path: "/calculators",
-        },
       ],
     };
   },

@@ -82,9 +82,8 @@ export default {
         readDate: this.date,
         readTime: this.time,
       };
-      var meterunit = new MeterUnits();
       try {
-        await meterunit.createMeterUnit(obj);
+        await MeterUnits.createMeterUnit(obj);
         this.loading = false;
         this.unit = null;
       } catch (err) {

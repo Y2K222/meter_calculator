@@ -1,63 +1,39 @@
-import { get, post, put, del } from "../../api";
-import Promise from "core-js-pure/features/promise";
-
-function Calculator() {
-
-    // Get al calculators
-    this.getAllCalculator = function () {
-        return new Promise(function (resolve, reject) {
-            get("/calculator").then(function (data) {
-                resolve(data);
-            }).catch(function (err) {
-                reject(err);
-            })
-        })
-    }
-
-    // Get one calculator
-    this.getOneCalculator = function (calculatorId) {
-        return new Promise(function (resolve, reject) {
-            get("/calculator/" + calculatorId).then(function (data) {
-                resolve(data);
-            }).catch(function (err) {
-                reject(err);
-            })
-        })
-    }
-
-    // Create calculator
-    this.createCalculator = function (body) {
-        return new Promise(function (resolve, reject) {
-            post("/calculator", body).then(function (data) {
-                resolve(data);
-            }).catch(function (err) {
-                reject(err);
-            })
-        })
-    }
-
-    // Update calculator
-    this.updateCalculator = function (calculatorId, body) {
-        return new Promise(function (resolve, reject) {
-            put("/calculator/" + calculatorId, body).then(function (data) {
-                resolve(data);
-            }).catch(function (err) {
-                reject(err);
-            })
-        })
-    }
-
-    // Delete calculator
-    this.deleteCalculator = function (calculatorId) {
-        return new Promise(function (resolve, reject) {
-            del("/calculator/" + calculatorId).then(function (data) {
-                resolve(data);
-            }).catch(function (err) {
-                reject(err);
-            })
-        })
-    }
-
-}
-
-export default Calculator;
+export default {
+  home: [
+    {
+      fromUnit: 1,
+      toUnit: 30,
+      price: 35,
+    },
+    {
+      fromUnit: 31,
+      toUnit: 50,
+      price: 50,
+    },
+    {
+      fromUnit: 51,
+      toUnit: 75,
+      price: 70,
+    },
+    {
+      fromUnit: 76,
+      toUnit: 100,
+      price: 90,
+    },
+    {
+      fromUnit: 101,
+      toUnit: 150,
+      price: 110,
+    },
+    {
+      fromUnit: 151,
+      toUnit: 200,
+      price: 120,
+    },
+    {
+      fromUnit: 201,
+      toUnit: 0,
+      price: 125,
+    },
+  ],
+};
