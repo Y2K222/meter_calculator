@@ -1,4 +1,4 @@
-import { get, post, put, del } from "../../api";
+import { get, post, put, del } from "@/api";
 import Promise from "core-js-pure/features/promise";
 
 function MeterUnits() {
@@ -62,7 +62,7 @@ function MeterUnits() {
     this.getTotalMeterCount = function () {
         return new Promise(function (resolve, reject) {
             get("/meter_units/get/total").then(function (data) {
-                resolve(data);
+                resolve(data[0]);
             }).catch(function (err) {
                 reject(err);
             })

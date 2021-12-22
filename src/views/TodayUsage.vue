@@ -5,10 +5,12 @@
   >
     <div class="main-view flex-column align-center">
       <h3 class="dark--text mb-10">နောက်ဆုံးဖတ်ထားသည့် ဒေတာ</h3>
-      <h2 class="primary--text text-center my-3">မီတာယူနစ်</h2>
-      <h1 class="green--text text-center mb-10">118928</h1>
-      <h2 class="primary--text text-center my-3">ကျသင့်ငွေ</h2>
-      <h1 class="green--text text-center mb-10">20000 ကျပ်</h1>
+      <h3 class="primary--text text-center my-3">မီတာယူနစ်</h3>
+      <h2 class="green--text text-center mb-10">{{ meterUnit }}</h2>
+      <h3 class="primary--text text-center my-3">အသားတင်ယူနစ်</h3>
+      <h2 class="green--text text-center mb-10">{{ netUnit }}</h2>
+      <h3 class="primary--text text-center my-3">ကျသင့်ငွေ</h3>
+      <h2 class="green--text text-center mb-10">{{ calculateMeter() }} ကျပ်</h2>
       <v-btn
         rounded
         large
@@ -24,11 +26,13 @@
   </div>
 </template>
 <script>
+import MeterUnits from "@/helper/meterUnits";
 export default {
   name: "TodayUsage",
   data: function () {
     return {
-      meterUnit: 405,
+      meterUnit: 0,
+      netUnit: 0,
       calculator: [
         {
           fromUnit: 1,
@@ -70,8 +74,9 @@ export default {
   },
   methods: {
     calculateMeter: function () {
+      var total = 0;
       var subtotals = [];
-      var meterUnit = this.meterUnit;
+      var meterUnit = this.netUnit;
       var c = this.calculator;
       for (var i in c) {
         if (c[i].toUnit !== 0) {
@@ -86,15 +91,49 @@ export default {
             }
           }
         } else {
-          console.log(meterUnit);
           subtotals.push(meterUnit * c[i].price);
         }
       }
-      console.log(subtotals);
+      for (i in subtotals) {
+        total += subtotals[i];
+      }
+      return total;
+    },
+    getLatestMeter: async function () {
+      try {
+        var meterUnits = new MeterUnits();
+
+        // Get to toalnumber of meter datas
+        var result = await meterUnits.getTotalMeterCount();
+        var totalCount = result.count;
+
+        // Generate skip and limit for last two datas
+        var skip = totalCount - 2;
+        var limit;
+        if (skip < 0) skip = 0;
+        if (totalCount == 1) limit = 1;
+        else limit = 2;
+
+        // Get last two datas
+        var result2 = await meterUnits.getMeterWithLimit(skip, limit);
+        var meterDatas = result2.totalData;
+        if (meterDatas.length > 0) {
+          if (meterDatas.length == 1) {
+            this.netUnit = meterDatas[0].unit;
+            this.meterUnit = meterDatas[0].unit;
+          } else {
+            // Calculate net unit
+            this.netUnit = meterDatas[0].unit - meterDatas[1].unit;
+            this.meterUnit = meterDatas[0].unit;
+          }
+        }
+      } catch (err) {
+        console.log("Error : ", err);
+      }
     },
   },
   created: function () {
-    this.calculateMeter();
+    this.getLatestMeter();
   },
 };
 </script>

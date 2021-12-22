@@ -40,8 +40,13 @@
             ></v-time-picker>
           </v-col>
           <v-col cols="12" align="center">
-            <v-btn rounded large class="primary snow--text mt-10">
-               <v-icon>add</v-icon> ဒေတာအသစ်ထည့်မည်
+            <v-btn
+              @click="addData"
+              rounded
+              large
+              class="primary snow--text mt-10"
+            >
+              <v-icon>add</v-icon> ဒေတာအသစ်ထည့်မည်
             </v-btn>
           </v-col>
         </v-row>
@@ -50,14 +55,51 @@
   </div>
 </template>
 <script>
+import MeterUnits from "@/helper/meterUnits";
 export default {
   name: "AddMeter",
   data: function () {
     return {
       unit: null,
-      date: null,
-      time: null,
+      date: this.getToday(),
+      time: this.getCurrentTime(),
+      loading: false,
     };
+  },
+  methods: {
+    getToday: function () {
+      var date = new Date();
+      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    },
+    getCurrentTime: function () {
+      var date = new Date();
+      return `${date.getHours()}:${date.getMinutes()}`;
+    },
+    addData: async function () {
+      this.loading = true;
+      var obj = {
+        unit: this.unit,
+        readDate: this.date,
+        readTime: this.time,
+      };
+      var meterunit = new MeterUnits();
+      try {
+        await meterunit.createMeterUnit(obj);
+        this.loading = false;
+        this.unit = null;
+      } catch (err) {
+        console.log("Error :", err);
+        this.loading = false;
+      }
+    },
+  },
+  watch: {
+    date: function (date) {
+      console.log(date);
+    },
+    time: function (time) {
+      console.log(time);
+    },
   },
 };
 </script>
