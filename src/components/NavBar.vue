@@ -22,7 +22,7 @@
     <v-app-bar class="primary" app>
       <v-app-bar-nav-icon dark @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-app-bar-title class="body-2 snow--text font-weight-bold"
-        > Baby ancestor မီတာ </v-app-bar-title
+        > မီတာ </v-app-bar-title
       >
     </v-app-bar>
     <!-- / Calculator AppBar -->

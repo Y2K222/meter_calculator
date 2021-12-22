@@ -1,6 +1,6 @@
 import Promise from "core-js-pure/features/promise";
 const protocol = "http://";
-const host = "localhost:3000/api";
+const host = "13.250.108.245:3000/api";
 
 // Get method
 var get = function (endpoint) {

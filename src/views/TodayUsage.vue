@@ -1,10 +1,73 @@
 <template>
-  <div
-    class="today-usage d-flex align-center justify-center"
-    style="height: 100%"
-  >
+  <div class="today-usage">
+    <v-container class="mt-15">
+      <v-row>
+        <v-col cols="12" md="4" align="center">
+          <v-card tile outlined>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" align="center">
+                  <h3 class="primary--text text-center my-3">
+                    နောက်ဆုံးဖတ်သည့်နေ့
+                  </h3>
+                  <h2 class="green--text text-center mb-10">{{ readDate }}</h2>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="4" align="center">
+          <v-card tile outlined>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" align="center">
+                  <h3 class="primary--text text-center my-3">နောက်ဆုံးဖတ်သည့်အချိန်</h3>
+                  <h2 class="green--text text-center mb-10">{{ readTime }}</h2>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="4" align="center">
+          <v-card tile outlined>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" align="center">
+                  <h3 class="primary--text text-center my-3">မီတာယူနစ်</h3>
+                  <h2 class="green--text text-center mb-10">{{ meterUnit }} ယူနစ်</h2>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="6" align="center">
+          <v-card tile outlined>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" align="center">
+                  <h3 class="primary--text text-center my-3">အသားတင်ယူနစ်</h3>
+                  <h2 class="green--text text-center mb-10">{{ netUnit }} ယူနစ်</h2>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="6" align="center">
+          <v-card tile outlined>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" align="center">
+                  <h3 class="primary--text text-center my-3">ကျသင့်ငွေ</h3>
+                  <h2 class="green--text text-center mb-10">{{ calculateMeter() }} ကျပ် </h2>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
     <div class="main-view flex-column align-center">
-      <h3 class="dark--text mb-10">နောက်ဆုံးဖတ်ထားသည့် ဒေတာ</h3>
+      <!-- <h3 class="dark--text mb-10">နောက်ဆုံးဖတ်ထားသည့် ဒေတာ</h3>
       <h3 class="primary--text text-center my-3">မီတာယူနစ်</h3>
       <h2 class="green--text text-center mb-10">{{ meterUnit }}</h2>
       <h3 class="primary--text text-center my-3">အသားတင်ယူနစ်</h3>
@@ -21,7 +84,12 @@
         dark
       >
         <v-icon>note_add</v-icon> ဒေတာအသစ်ထည့်ရန်
-      </v-btn>
+      </v-btn> -->
+      <v-row>
+        <v-col cols="4"> </v-col>
+        <v-col cols="4"></v-col>
+        <v-col cols="4"></v-col>
+      </v-row>
     </div>
   </div>
 </template>
@@ -33,7 +101,9 @@ export default {
   data: function () {
     return {
       meterUnit: 0,
-      netUnit: 0
+      netUnit: 0,
+      readDate: null,
+      readTime: null,
     };
   },
   methods: {
@@ -79,6 +149,8 @@ export default {
         var latestData = result2.totalData[0];
         this.meterUnit = latestData.unit;
         this.netUnit = latestData.netUnit;
+        this.readDate = latestData.readDate;
+        this.readTime = latestData.readTime;
       } catch (err) {
         console.log("Error : ", err);
       }

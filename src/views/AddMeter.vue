@@ -91,14 +91,6 @@ export default {
         this.loading = false;
       }
     },
-  },
-  watch: {
-    date: function (date) {
-      console.log(date);
-    },
-    time: function (time) {
-      console.log(time);
-    },
-  },
+  }
 };
 </script>

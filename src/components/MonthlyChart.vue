@@ -53,7 +53,7 @@ export default {
           ],
           datasets: [
             {
-              label: "# of Votes",
+              label: "အသားတင်ယူနစ်များ",
               data: this.monthlyDatas,
               backgroundColor: "rgba(54, 162, 235, 0.2)",
               borderColor: "rgba(54, 162, 235, 1)",
@@ -76,7 +76,7 @@ export default {
     var self = this;
     setTimeout(function () {
       self.drawMonthlyChart();
-    }, 500);
+    }, 2000);
   },
 };
 </script>

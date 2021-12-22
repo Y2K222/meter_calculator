@@ -87,10 +87,15 @@
         </v-col>
         <v-col cols="12" align="center"> </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="12" md="8" offset-md="2">
+          <WeeklyChart :weeklyDatas="weekNetDatas" />
+        </v-col>
+      </v-row>
       <v-divider class="my-10"></v-divider>
       <v-row>
         <v-col cols="12" md="6" offset-md="3">
-          <h3 class="dark--text mt-3">လအလိုက် အသုံးပြုနှုန်း</h3>
+          <h3 class="dark--text mt-3">ယခုလ အသုံးပြုနှုန်း</h3>
         </v-col>
         <v-col cols="12" md="4">
           <v-card dark class="orange darken-3">
@@ -184,23 +189,28 @@
 <script>
 import MeterUnits from "@/helper/meterUnits";
 import MonthlyChart from "@/components/MonthlyChart";
+import WeeklyChart from "@/components/WeeklyChart";
 export default {
-  name: "MeterCalculatorReports",
-  components: { MonthlyChart },
-  data() {
+  name: "Reports",
+  components: { MonthlyChart, WeeklyChart },
+  data: function () {
     return {
       weekDatas: [],
       monthDatas: [],
       weekNetDatas: [],
       monthNetDatas: [],
+      menu: false,
+      startDate: null,
+      date1: null,
+      menu2: false,
+      endDate: null,
+      date2: null,
     };
   },
-
-  mounted() {
+  created: async function () {
     this.getCurrentWeekDatas();
     this.getThisMonthDatas();
   },
-
   methods: {
     getCurrentWeekDatas: async function () {
       var curr = new Date(); // get current date
@@ -212,7 +222,7 @@ export default {
       try {
         this.weekDatas = await MeterUnits.getMeterWithRange(firstday, lastday);
         for (var i in this.weekDatas) {
-          this.weekNetDatas.push(this.weekNetDatas[i].netUnit);
+          this.weekNetDatas.push(this.weekDatas[i].netUnit);
         }
       } catch (err) {
         console.log("Error : ", err);
@@ -224,15 +234,15 @@ export default {
         date.getFullYear(),
         date.getMonth(),
         1
-      ).toLocaleDateString();
+      ).toLocaleDateString("en-029");
       var lastDay = new Date(
         date.getFullYear(),
         date.getMonth() + 1,
         0
-      ).toLocaleDateString();
+      ).toLocaleDateString("en-029");
       try {
         this.monthDatas = await MeterUnits.getMeterWithRange(firstDay, lastDay);
-        for (var i in this.monthDatas) {
+        for (var i = 0; i < this.monthDatas.length; i++) {
           this.monthNetDatas.push(this.monthDatas[i].netUnit);
         }
       } catch (err) {
@@ -266,7 +276,6 @@ export default {
         for (var i in data) {
           unitArray.push(data[i].netUnit);
         }
-        console.log(unitArray);
         unitArray.map((unit) => {
           total += parseInt(unit);
         });

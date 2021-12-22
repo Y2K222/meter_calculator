@@ -15,13 +15,43 @@
             :items-per-page="5"
             class="dark--text font-weight-bold"
           >
-            <template v-slot:item.price="{ item }">
+            <template v-slot:[`item.price`]="{ item }">
               {{ calculateMeter(item.netUnit) }}
+            </template>
+            <template v-slot:[`item._id`]="{ item }">
+              <v-btn icon color="grey" @click="selectToDelete(item._id)">
+                <v-icon>delete</v-icon>
+              </v-btn>
             </template>
           </v-data-table>
         </v-col>
       </v-row>
     </v-container>
+    <v-dialog v-model="dialog" max-width="300">
+      <v-card>
+        <v-card-title class="text-h5"> ဒေတာကိုဖျက်ပစ်မည် </v-card-title>
+        <v-card-text> ဒေတာကိုဖျက်ရန် သေချာပါသလား </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="dark darken-1"
+            class="font-weight-bold"
+            text
+            @click="dialog = false"
+          >
+            မလုပ်တော့
+          </v-btn>
+          <v-btn
+            color="orange darken-1"
+            class="font-weight-bold"
+            text
+            @click="deleteSelectedData"
+          >
+            ဖျက်မည်
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -43,7 +73,10 @@ export default {
         { text: "မီတာယူနစ်", value: "unit" },
         { text: "အသားတင်ယူနစ်", value: "netUnit" },
         { text: "ကျသင့်ငွေ", value: "price" },
+        { text: "ပြင်ဆင်ရန်", value: "_id" },
       ],
+      idToDelete: null,
+      dialog: false,
     };
   },
   methods: {
@@ -96,6 +129,20 @@ export default {
       } else {
         this.loading = true;
         this.datas = [];
+      }
+    },
+    selectToDelete: function (dataId) {
+      this.idToDelete = dataId;
+      this.dialog = true;
+    },
+    deleteSelectedData: async function () {
+      try {
+        await MeterUnits.deleteMeterUnit(this.idToDelete);
+        this.dialog = false;
+        this.idToDelete = null;
+        this.readDataFromApi(this.options.page, this.options.itemsPerPage);
+      } catch (err) {
+        console.log("Error : ", err);
       }
     },
   },
